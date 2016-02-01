@@ -3,7 +3,6 @@ package pradeep.exp.tchannel;
 import com.uber.tchannel.api.SubChannel;
 import com.uber.tchannel.api.TChannel;
 import com.uber.tchannel.api.TFuture;
-import com.uber.tchannel.api.handlers.TFutureCallback;
 import com.uber.tchannel.messages.RawRequest;
 import com.uber.tchannel.messages.RawResponse;
 import org.apache.commons.cli.*;
@@ -66,13 +65,9 @@ public class Client {
                     port
             );
 
-            f.addCallback(new TFutureCallback<RawResponse>() {
-                @Override
-                public void onResponse(RawResponse rawResponse) {
-                    done.countDown();
-                    System.out.println(rawResponse.getBody());
-                }
-
+            f.addCallback(rawResponse -> {
+                done.countDown();
+                System.out.println(rawResponse.getBody());
             });
         }
 
