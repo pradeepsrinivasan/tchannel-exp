@@ -8,10 +8,10 @@
       <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>tchannel-client</artifactId>
+  <artifactId>tchannel-models</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>tchannel-client</name>
+  <name>tchannel-models</name>
   <url>http://maven.apache.org</url>
   <dependencies>
 

@@ -24,6 +24,7 @@
   <modules>
 	<module>tchannel-server</module>
 	<module>tchannel-client</module>
+	<module>tchannel-models</module>
   </modules>
 
   <build>
