@@ -1,9 +1,12 @@
 package pradeep.exp.tchannel;
 
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
 import com.uber.tchannel.api.TChannel;
 import org.apache.commons.cli.*;
 
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Hello world!
@@ -37,19 +40,26 @@ public class Server {
 
         int port = Integer.parseInt(cmd.getOptionValue("p", "9000"));
 
-        new Server(port).run();
+        MetricRegistry registry = new MetricRegistry();
+        ConsoleReporter reporter = ConsoleReporter.forRegistry(registry)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
+        reporter.start(10, TimeUnit.SECONDS);
+
+        new Server(port).run(registry);
 
         System.out.println("stopping....");
     }
 
-    private void run() throws InterruptedException {
+    private void run(MetricRegistry registry) throws InterruptedException {
         TChannel tchannel = new TChannel.Builder("server")
                 .setServerHost(InetAddress.getLoopbackAddress())
                 .setServerPort(port)
                 .build();
 
         tchannel.makeSubChannel("tchannel-server")
-                .register("foo", new FooRequestHandler());
+                .register("foo", new FooRequestHandler(registry));
 
         tchannel.listen().channel().closeFuture().sync();
 

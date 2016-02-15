@@ -1,5 +1,7 @@
 package pradeep.exp.tchannel;
 
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
 import com.uber.tchannel.api.handlers.RawRequestHandler;
 import com.uber.tchannel.messages.RawRequest;
 import com.uber.tchannel.messages.RawResponse;
@@ -9,10 +11,19 @@ import com.uber.tchannel.messages.RawResponse;
  */
 public class FooRequestHandler extends RawRequestHandler {
 
+    private final MetricRegistry registry;
+    private final Meter requests;
+
+    public FooRequestHandler(MetricRegistry registry) {
+        this.registry = registry;
+        requests = registry.meter("foo-rps");
+    }
+
     @Override
     public RawResponse handleImpl(RawRequest rawRequest) {
 
-        System.out.println("INCOMING:" + rawRequest.getService() + ":" + rawRequest.getBody() + ":" + rawRequest.getHeader());
+//        byte[] response = responseCodec.encode(200, "OK", rawRequest.getBody().getBytes(Charset.defaultCharset()));
+        requests.mark();
 
         return new RawResponse.Builder(rawRequest)
                 .setBody(rawRequest.getBody())
